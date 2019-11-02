@@ -14,6 +14,7 @@ object SheetsWrapper {
     Seq(new RowData().setValues(values.map(generateCell).asJava))
 
   private def generateCell(value: Any): CellData = value match {
+    case v: String if v.length == 0          => generateStringCell("")
     case v: String if v.head.toString == "=" => generateFormulaCell(v)
     case v: String                           => generateStringCell(v)
     case v: Double                           => generateNumberCell(v)
