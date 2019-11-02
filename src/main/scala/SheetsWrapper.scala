@@ -1,3 +1,6 @@
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 import com.google.api.services.sheets.v4.model.{CellData, ExtendedValue, RowData}
 
 import scala.jdk.CollectionConverters._
@@ -20,6 +23,7 @@ object SheetsWrapper {
     case v: Double                           => generateNumberCell(v)
     case v: Int                              => generateNumberCell(v.toDouble)
     case v: Boolean                          => generateBoolCell(v)
+    case v: LocalDateTime                    => generateStringCell(formatter.format(v))
     case v: Seq[_]                           => generateStringCell(v.mkString(", "))
     case _                                   => ???
   }
@@ -35,4 +39,6 @@ object SheetsWrapper {
 
   private def generateBoolCell(value: Boolean): CellData =
     new CellData().setUserEnteredValue(new ExtendedValue().setBoolValue(value))
+
+  private val formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")
 }
