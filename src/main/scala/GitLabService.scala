@@ -20,11 +20,15 @@ class GitLabService(privateToken: String, domainName: String, apiVersion: String
       id          = ticket.obj("iid").num
       title       = ticket.obj("title").str
       description = ticket.obj("description").str
+      createdAt   = ticket.obj("created_at").toLocalDateTime
+      updatedAt   = ticket.obj("updated_at").toLocalDateTime
+      labels      = ticket.obj("labels").toLabels
+      assignees   = ticket.obj("assignees").toAssignees
+      author      = ticket.obj("author").obj("name").str
       url         = ticket.obj("web_url").str
       weight      = ticket.obj("weight").toWeight
-      labels      = ticket.obj("labels").toLabels
       if isBacklogTicket(labels)
-    } yield Ticket(id, title, description, url, weight, labels)
+    } yield Ticket(id, title, description, createdAt, updatedAt, labels, assignees, author, url, weight)
 
   def toJson(tickets: ArrayBuffer[Ticket]): Value = {
     ujson.Obj(

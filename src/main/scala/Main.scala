@@ -19,13 +19,30 @@ object Main extends App {
     gitlabServiceConf.groupId
   )
 
-  val header = SheetsWrapper.generateRow(Seq("ID", "Title", "Weight", "Labels"))
+  val header = SheetsWrapper.generateRow(
+    Seq("ID", "Title", "Description", "Created at", "Updated at", "Labels", "Assignees", "Author", "Weight")
+  )
   val body: Seq[Seq[RowData]] = {
     val tickets = gitlabService.fetch()
     gitlabService
       .extractBackLogTickets(tickets)
       .toSeq
-      .map(t => SheetsWrapper.generateRow(Seq(t.getHyperLink, t.title, t.weight, t.labels)))
+      .map(
+        t =>
+          SheetsWrapper.generateRow(
+            Seq(
+              t.getHyperLink,
+              t.title,
+              t.description,
+              t.createdAt.toString,
+              t.updatedAt.toString,
+              t.labels,
+              t.assignees,
+              t.author,
+              t.weight
+            )
+          )
+      )
   }
   val rows: util.List[RowData] = (header ++ body.flatten).asJava
   val batchUpdateRequest       = GoogleService.batchUpdateRequest(rows)
