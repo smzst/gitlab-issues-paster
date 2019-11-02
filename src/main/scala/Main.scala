@@ -16,7 +16,7 @@ object Main extends App {
     gitlabServiceConf.privateToken,
     gitlabServiceConf.domainName,
     gitlabServiceConf.apiVersion,
-    gitlabServiceConf.groupId
+    gitlabServiceConf.projectId
   )
 
   val header = SheetsWrapper.generateRow(

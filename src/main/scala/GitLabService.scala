@@ -3,13 +3,17 @@ import ujson.Value.Value
 
 import scala.collection.mutable.ArrayBuffer
 
-class GitLabService(privateToken: String, domainName: String, apiVersion: String, groupId: String) {
+class GitLabService(privateToken: String, domainName: String, apiVersion: String, projectId: String) {
   def fetch(): Value = ujson.read(
     requests
       .get(
-        s"https://$domainName/api/$apiVersion/groups/$groupId/issues",
+        s"https://$domainName/api/$apiVersion/projects/$projectId/issues",
         headers = Map("PRIVATE-TOKEN" -> privateToken),
-        params = Map("state"          -> "opened", "order_by" -> "relative_position", "per_page" -> "50")
+        params = Map(
+          "state"    -> "opened",
+          "order_by" -> "relative_position",
+          "per_page" -> "50"
+        )
       )
       .text()
   )

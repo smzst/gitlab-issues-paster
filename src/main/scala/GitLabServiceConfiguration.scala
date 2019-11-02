@@ -4,7 +4,7 @@ case class GitLabServiceConfiguration(
     apiVersion: String,
     privateToken: String,
     domainName: String,
-    groupId: String
+    projectId: String
 )
 
 object GitLabServiceConfiguration {
@@ -12,6 +12,6 @@ object GitLabServiceConfiguration {
     config.getString("api-version"),
     config.getString("private-token"),
     config.getString("domain-name"),
-    config.getString("group-id")
+    config.getString("project-id")
   )
 }
