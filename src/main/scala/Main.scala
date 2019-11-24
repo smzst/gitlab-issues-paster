@@ -20,7 +20,7 @@ object Main extends App {
   )
 
   val header = SheetsWrapper.generateRow(
-    Seq("ID", "Title", "Description", "Created at", "Updated at", "Labels", "Assignees", "Author", "Weight")
+    Seq("ID", "State", "Title", "Description", "Created at", "Updated at", "Labels", "Assignees", "Author", "Weight")
   )
   val body: Seq[Seq[RowData]] = {
     val tickets = gitlabService.fetch()
@@ -32,6 +32,7 @@ object Main extends App {
           SheetsWrapper.generateRow(
             Seq(
               t.getHyperLink,
+              t.state.value,
               t.title,
               t.description,
               t.createdAt,

@@ -14,7 +14,6 @@ class GitLabService(privateToken: String, domainName: String, apiVersion: String
           s"https://$domainName/api/$apiVersion/projects/$projectId/issues",
           headers = Map("PRIVATE-TOKEN" -> privateToken),
           params = Map(
-            "state"    -> "opened",
             "order_by" -> "relative_position",
             "per_page" -> "100",
             "page"     -> n.toString
@@ -24,6 +23,7 @@ class GitLabService(privateToken: String, domainName: String, apiVersion: String
       val values: ArrayBuffer[Value] = acc ++ ujson.read(r.text()).arr
       val totalPage: Int             = r.headers("x-total-pages")(0).toInt
 
+      Thread.sleep(500)
       if (n == totalPage) values.toSeq else recursive(n + 1, values)
     }
 
@@ -34,6 +34,7 @@ class GitLabService(privateToken: String, domainName: String, apiVersion: String
     for {
       ticket      <- tickets.arr
       id          = ticket.obj("iid").num
+      state       = ticket.obj("state").toState
       title       = ticket.obj("title").str
       description = ticket.obj("description").toDescription
       createdAt   = ticket.obj("created_at").toLocalDateTime
@@ -44,7 +45,7 @@ class GitLabService(privateToken: String, domainName: String, apiVersion: String
       url         = ticket.obj("web_url").str
       weight      = ticket.obj("weight").toWeight
       if isBacklogTicket(labels)
-    } yield Ticket(id, title, description, createdAt, updatedAt, labels, assignees, author, url, weight)
+    } yield Ticket(id, state, title, description, createdAt, updatedAt, labels, assignees, author, url, weight)
 
   def toJson(tickets: ArrayBuffer[Ticket]): Value = {
     ujson.Obj(
