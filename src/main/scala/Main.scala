@@ -1,8 +1,7 @@
-import java.util
-
 import com.google.api.client.auth.oauth2.Credential
-import com.google.api.services.sheets.v4.model._
 import com.typesafe.config.ConfigFactory
+import gitlab.GitLabService
+import google.GoogleService
 
 import scala.jdk.CollectionConverters._
 
@@ -17,45 +16,18 @@ object Main extends App {
     gitlabServiceConf.apiVersion,
     gitlabServiceConf.projectId
   )
-
-  val header = SheetsWrapper.generateRow(
-    Seq("ID", "State", "Title", "Description", "Created at", "Updated at", "Labels", "Assignees", "Author", "Weight")
+  val googleService = new GoogleService(
+    googleServiceConf.credentialsFilePath,
+    googleServiceConf.scopes,
+    googleServiceConf.credentialStoreDirectory,
+    googleServiceConf.applicationName
   )
-  val body: Seq[Seq[RowData]] = {
-    val tickets = gitlabService.fetch()
-    gitlabService
-      .extractBackLogTickets(tickets)
-      .toSeq
-      .map(
-        t =>
-          SheetsWrapper.generateRow(
-            Seq(
-              t.getHyperLink,
-              t.state.value,
-              t.title,
-              t.description,
-              t.createdAt,
-              t.updatedAt,
-              t.labels,
-              t.assignees,
-              t.author,
-              t.weight
-            )
-          )
-      )
-  }
-  val rows: util.List[RowData] = (header ++ body.flatten).asJava
-  val batchUpdateRequest       = GoogleService.batchUpdateRequest(rows)
 
-  val googleService =
-    new GoogleService(
-      googleServiceConf.credentialsFilePath,
-      googleServiceConf.scopes,
-      googleServiceConf.credentialStoreDirectory,
-      googleServiceConf.applicationName
-    )
+  val tickets            = gitlabService.fetch()
+  val request            = new SheetsRequestCreator(tickets).create()
+  val batchUpdateRequest = GoogleService.batchUpdateRequest(request.asJava)
+
   val credential: Credential = googleService.authorize()
-
   googleService
     .sheetsService(credential)
     .spreadsheets()

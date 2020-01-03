@@ -1,3 +1,5 @@
+package google
+
 import com.google.api.services.sheets.v4.SheetsScopes
 import com.typesafe.config.Config
 

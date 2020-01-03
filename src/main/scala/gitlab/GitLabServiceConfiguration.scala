@@ -1,3 +1,5 @@
+package gitlab
+
 import com.typesafe.config.Config
 
 case class GitLabServiceConfiguration(
