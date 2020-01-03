@@ -1,6 +1,8 @@
 import java.io.{InputStream, InputStreamReader}
+import java.time.format.DateTimeFormatter
 import java.util
 
+import SheetsWrapper._
 import com.google.api.client.auth.oauth2.Credential
 import com.google.api.services.sheets.v4.model._
 import com.typesafe.config.ConfigFactory
@@ -19,28 +21,30 @@ object Main extends App {
     gitlabServiceConf.projectId
   )
 
-  val header = SheetsWrapper.generateRow(
+  val header = generateRow(
     Seq("ID", "State", "Title", "Description", "Created at", "Updated at", "Labels", "Assignees", "Author", "Weight")
+      .map(generateStringCell)
   )
   val body: Seq[Seq[RowData]] = {
-    val tickets = gitlabService.fetch()
+    val formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")
+    val tickets   = gitlabService.fetch()
     gitlabService
       .extractBackLogTickets(tickets)
-      .toSeq
+      .value
       .map(
         t =>
-          SheetsWrapper.generateRow(
+          generateRow(
             Seq(
-              t.getHyperLink,
-              t.state.value,
-              t.title,
-              t.description,
-              t.createdAt,
-              t.updatedAt,
-              t.labels,
-              t.assignees,
-              t.author,
-              t.weight
+              generateFormulaCell(s"""=hyperlink("${t.url}", "${t.id.toString}")"""),
+              generateStringCell(t.state.value),
+              generateStringCell(t.title),
+              generateStringCell(t.description),
+              generateStringCell(formatter.format(t.createdAt)),
+              generateStringCell(formatter.format(t.updatedAt)),
+              generateStringCell(t.labels.mkString(", ")),
+              generateStringCell(t.assignees.mkString(", ")),
+              generateStringCell(t.author),
+              generateNumberCell(t.weight)
             )
           )
       )
