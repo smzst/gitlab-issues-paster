@@ -10,5 +10,6 @@ libraryDependencies ++= Seq(
   "com.google.apis"         % "google-api-services-sheets" % "v4-rev516-1.23.0",
   "com.lihaoyi"             %% "requests"                  % "0.2.0",
   "com.lihaoyi"             %% "upickle"                   % "0.8.0",
-  "com.typesafe"            % "config"                     % "1.4.0"
+  "com.typesafe"            % "config"                     % "1.4.0",
+  "org.scalatest"           %% "scalatest"                 % "3.0.8" % "test",
 )
