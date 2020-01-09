@@ -1,6 +1,3 @@
-import java.util
-import java.util.Collections
-
 import com.google.api.services.sheets.v4.SheetsScopes
 import com.typesafe.config.Config
 
@@ -9,7 +6,7 @@ case class GoogleServiceConfiguration(
     credentialsFilePath: String,
     spreadSheetId: String,
     credentialStoreDirectory: String,
-    scopes: util.List[String]
+    scopes: Seq[String]
 )
 
 object GoogleServiceConfiguration {
@@ -18,6 +15,6 @@ object GoogleServiceConfiguration {
     config.getString("credential-file-path"),
     config.getString("spread-sheet-id"),
     s"/tmp/.google_credentials/${config.getString("application-name")}",
-    Collections.singletonList(SheetsScopes.SPREADSHEETS)
+    Seq(SheetsScopes.SPREADSHEETS)
   )
 }

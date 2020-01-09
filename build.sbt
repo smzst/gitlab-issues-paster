@@ -1,4 +1,4 @@
-name := "google-spread-sheet-api"
+name := """gitlab-issues-paster"""
 
 version := "0.1"
 

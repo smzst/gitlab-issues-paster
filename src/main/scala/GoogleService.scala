@@ -1,4 +1,4 @@
-import java.io.Reader
+import java.io.{File, InputStream, InputStreamReader}
 import java.util
 
 import com.google.api.client.auth.oauth2.Credential
@@ -16,8 +16,8 @@ import com.google.api.services.sheets.v4.model._
 import scala.jdk.CollectionConverters._
 
 class GoogleService(
-    clientSecretReader: Reader,
-    authorizationScopes: util.List[String],
+    credentialsFilePath: String,
+    authorizationScopes: Seq[String],
     credentialStoreDirectory: String,
     applicationName: String
 ) {
@@ -26,14 +26,16 @@ class GoogleService(
   private val JsonFactory: JsonFactory        = JacksonFactory.getDefaultInstance
 
   def authorize(): Credential = {
-    val clientSecrets: GoogleClientSecrets     = GoogleClientSecrets.load(JsonFactory, clientSecretReader)
-    val dataStoreFactory: FileDataStoreFactory = new FileDataStoreFactory(new java.io.File(credentialStoreDirectory))
+    val inputStream: InputStream           = getClass.getResourceAsStream(credentialsFilePath)
+    val clientSecrets: GoogleClientSecrets = GoogleClientSecrets.load(JsonFactory, new InputStreamReader(inputStream))
+
+    val dataStoreFactory: FileDataStoreFactory = new FileDataStoreFactory(new File(credentialStoreDirectory))
 
     val builder: GoogleAuthorizationCodeFlow.Builder = new GoogleAuthorizationCodeFlow.Builder(
       HttpTransport,
       JsonFactory,
       clientSecrets,
-      authorizationScopes
+      authorizationScopes.asJava
     )
 
     builder.setDataStoreFactory(dataStoreFactory).setAccessType("offline")

@@ -1,4 +1,3 @@
-import java.io.{InputStream, InputStreamReader}
 import java.util
 
 import com.google.api.client.auth.oauth2.Credential
@@ -48,12 +47,9 @@ object Main extends App {
   val rows: util.List[RowData] = (header ++ body.flatten).asJava
   val batchUpdateRequest       = GoogleService.batchUpdateRequest(rows)
 
-  // `classOf[Nothing] getResourceAsStream CredentialsFilePath` と書いて sbt run するとぬるぽ発生した
-  val inputStream: InputStream = getClass.getResourceAsStream(googleServiceConf.credentialsFilePath)
-
   val googleService =
     new GoogleService(
-      new InputStreamReader(inputStream),
+      googleServiceConf.credentialsFilePath,
       googleServiceConf.scopes,
       googleServiceConf.credentialStoreDirectory,
       googleServiceConf.applicationName

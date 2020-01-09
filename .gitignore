@@ -88,5 +88,6 @@ project/plugins/project/
 .cache
 .lib/
 
-/src/main/resources/credentials.json
+/src/main/resources/*.json
+/src/main/resources/*.p12
 /.envrc
