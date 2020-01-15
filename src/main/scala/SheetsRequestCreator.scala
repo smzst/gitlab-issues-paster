@@ -3,6 +3,7 @@ import java.time.format.DateTimeFormatter
 
 import SheetsWrapper.{generateFormulaCell, generateNumberCell, generateRow, generateStringCell}
 import com.google.api.services.sheets.v4.model.RowData
+import models.State.{Closed, Opened}
 import models.{BacklogTickets, State, Ticket}
 import ujson.Value.Value
 

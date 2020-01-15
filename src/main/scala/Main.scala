@@ -1,7 +1,7 @@
 import com.google.api.client.auth.oauth2.Credential
 import com.typesafe.config.ConfigFactory
-import gitlab.GitLabService
-import google.GoogleService
+import gitlab.{GitLabService, GitLabServiceConfiguration}
+import google.{GoogleService, GoogleServiceConfiguration}
 
 import scala.jdk.CollectionConverters._
 
